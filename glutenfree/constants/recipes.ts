@@ -13,7 +13,7 @@ export type Allergen =
 export type FodmapLevel = 'low' | 'moderate' | 'high';
 export type Mood = 'comfort' | 'refreshing' | 'adventurous';
 export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack' | 'dessert';
-export type ProteinKey = 'chicken' | 'beef' | 'lamb' | 'pork' | 'fish' | 'shellfish' | 'plant';
+export type ProteinKey = 'chicken' | 'beef' | 'lamb' | 'pork' | 'fish' | 'shellfish' | 'plant' | 'turkey';
 
 export interface IngredientSection {
   title: string;
@@ -77,6 +77,12 @@ export const proteinFilters: {
     label: 'Chicken',
     icon: 'food-drumstick',
     description: 'Roasted thighs, poached breasts, skewers.',
+  },
+  {
+    key: 'turkey',
+    label: 'Turkey',
+    icon: 'food-turkey',
+    description: 'Ground blends, tenderloins, cozy gravy bases.',
   },
   {
     key: 'beef',
@@ -1490,6 +1496,219 @@ export const recipes: Recipe[] = [
       'Add thin peach slices for summer sweetness.',
     ],
     nutrition: { calories: 520, protein: 36, carbs: 44, fat: 22, fiber: 4 },
+  },
+  {
+    id: 'smoky-turkey-lasagna',
+    title: 'Smoky Turkey Lasagna Stacks',
+    subtitle: 'Cassava lasagna sheets, roasted squash, sage ricotta',
+    difficulty: 'ambitious',
+    totalTime: 60,
+    prepTime: 25,
+    rating: 4.9,
+    serves: 6,
+    proteins: ['turkey'],
+    allergens: ['dairy'],
+    fodmap: 'moderate',
+    fodmapNotes: 'Uses lactose-free ricotta and garlic-infused oil for gentle aromatics.',
+    heroGradient: ['#f6d365', '#fda085'],
+    mealType: 'dinner',
+    tags: ['comfort', 'meal prep'],
+    moods: ['comfort'],
+    ingredients: [
+      {
+        title: 'Turkey ragu',
+        items: ['1 lb ground turkey', '1 tbsp garlic-infused oil', '1 tsp smoked paprika', '1 cup crushed tomatoes', '1/2 cup bone broth'],
+      },
+      {
+        title: 'Layers',
+        items: ['8 gluten-free lasagna sheets', '2 cups roasted delicata squash slices', '2 cups baby spinach'],
+      },
+      {
+        title: 'Ricotta mix',
+        items: ['1 1/2 cups lactose-free ricotta', '2 tbsp chopped sage', 'Zest of 1 lemon'],
+      },
+    ],
+    steps: [
+      'Brown turkey in garlic-infused oil with smoked paprika; stir in tomatoes and broth, simmer 10 minutes.',
+      'Boil lasagna sheets until pliable, rinse, and pat dry.',
+      'Mix ricotta with sage and lemon zest.',
+      'Layer mini stacks with pasta, ricotta, spinach, turkey ragu, and squash. Repeat twice for height.',
+      'Bake at 375°F (190°C) for 18 minutes until bubbly and slightly crisp at the edges.',
+    ],
+    spotlightTips: [
+      'Use muffin tins to keep stacks upright for easy meal prep portions.',
+      'Swap roasted squash for zucchini ribbons when you need a lighter version.',
+    ],
+    nutrition: { calories: 540, protein: 38, carbs: 46, fat: 20, fiber: 5 },
+  },
+  {
+    id: 'turkey-biscuits-gravy',
+    title: 'Turkey Biscuits & Gravy',
+    subtitle: 'Buttermilk cassava biscuits, herbed turkey sausage gravy',
+    difficulty: 'medium',
+    totalTime: 40,
+    prepTime: 20,
+    rating: 4.8,
+    serves: 4,
+    proteins: ['turkey'],
+    allergens: ['dairy'],
+    fodmap: 'moderate',
+    fodmapNotes: 'Relies on lactose-free milk and garlic-infused oil so the gravy stays gentle.',
+    heroGradient: ['#ffe29f', '#ffa99f'],
+    mealType: 'breakfast',
+    tags: ['brunch', 'weekend'],
+    moods: ['comfort'],
+    ingredients: [
+      {
+        title: 'Biscuits',
+        items: ['2 cups cassava flour', '2 tsp baking powder', '1 tsp salt', '4 tbsp cold ghee', '1 cup lactose-free buttermilk'],
+      },
+      {
+        title: 'Turkey gravy',
+        items: ['1 lb turkey sausage', '2 tbsp garlic-infused oil', '3 tbsp cassava flour', '2 1/2 cups lactose-free milk', '1 tsp dried thyme'],
+      },
+    ],
+    steps: [
+      'Cut ghee into cassava flour, baking powder, and salt. Stir in buttermilk, pat into rounds, and bake at 425°F (220°C) for 12 minutes.',
+      'Brown turkey sausage with garlic-infused oil; sprinkle cassava flour and cook 1 minute.',
+      'Whisk in warm lactose-free milk, simmer until thick, and season with thyme, salt, and pepper.',
+      'Split biscuits, spoon gravy, and top with chives.',
+    ],
+    spotlightTips: [
+      'Freeze unbaked biscuits for weekday breakfasts; bake from frozen with 3 extra minutes.',
+      'Add diced green chiles for a Southwest kick.',
+    ],
+    nutrition: { calories: 480, protein: 28, carbs: 46, fat: 22, fiber: 4 },
+  },
+  {
+    id: 'dairy-free-turkey-gravy',
+    title: 'Dairy-Free Turkey Gravy Bowls',
+    subtitle: 'Coconut milk gravy, almond flour drop biscuits, garlicky greens',
+    difficulty: 'medium',
+    totalTime: 45,
+    prepTime: 20,
+    rating: 4.7,
+    serves: 4,
+    proteins: ['turkey'],
+    allergens: ['treeNuts'],
+    fodmap: 'low',
+    fodmapNotes: 'Uses coconut milk and garlic-infused oil, keeping onions/garlic out entirely.',
+    heroGradient: ['#d9a7c7', '#fffcdc'],
+    mealType: 'dinner',
+    tags: ['dairy free', 'comfort'],
+    moods: ['comfort', 'refreshing'],
+    ingredients: [
+      {
+        title: 'Drop biscuits',
+        items: ['1 1/2 cups almond flour', '1/2 cup tapioca starch', '2 tsp baking powder', '1/2 cup coconut yogurt', '1 egg'],
+      },
+      {
+        title: 'Gravy',
+        items: ['1 lb ground turkey', '1 tbsp garlic-infused oil', '2 tbsp tapioca starch', '2 cups turkey bone broth', '1/2 cup light coconut milk', '1 tsp sage'],
+      },
+      {
+        title: 'Greens',
+        items: ['3 cups chopped kale', '1 tsp olive oil', 'Lemon zest'],
+      },
+    ],
+    steps: [
+      'Combine biscuit ingredients, scoop onto a lined tray, and bake at 375°F (190°C) for 15 minutes.',
+      'Brown turkey with garlic-infused oil; sprinkle tapioca starch, then whisk in broth and coconut milk until silky.',
+      'Season gravy with sage, salt, and pepper; simmer 5 minutes.',
+      'Sauté kale with olive oil and lemon zest until just wilted.',
+      'Serve bowls with biscuits, kale, and dairy-free turkey gravy ladled over top.',
+    ],
+    spotlightTips: [
+      'Use chicken bone broth if turkey broth is unavailable—just keep it low-sodium.',
+      'Add a splash of coconut aminos for extra depth.',
+    ],
+    nutrition: { calories: 430, protein: 30, carbs: 32, fat: 22, fiber: 5 },
+  },
+  {
+    id: 'cranberry-turkey-power-bowl',
+    title: 'Cranberry Citrus Turkey Power Bowl',
+    subtitle: 'Millet, shaved Brussels sprouts, maple-cranberry relish',
+    difficulty: 'medium',
+    totalTime: 35,
+    prepTime: 20,
+    rating: 4.8,
+    serves: 4,
+    proteins: ['turkey'],
+    allergens: [],
+    fodmap: 'low',
+    fodmapNotes: 'Uses garlic-infused oil and portioned cranberries to keep it low-FODMAP.',
+    heroGradient: ['#f7b267', '#f79d84'],
+    mealType: 'lunch',
+    tags: ['meal prep', 'dairy free'],
+    moods: ['refreshing', 'comfort'],
+    ingredients: [
+      {
+        title: 'Grain base',
+        items: ['2 cups cooked millet', '1 cup shredded Brussels sprouts', '1 cup baby kale', '1/2 cup sliced cucumbers'],
+      },
+      {
+        title: 'Turkey',
+        items: ['1 lb turkey tenderloin', '1 tbsp garlic-infused olive oil', 'Zest of 1 orange', '1 tsp smoked salt'],
+      },
+      {
+        title: 'Relish',
+        items: ['1/2 cup dried cranberries', '2 tbsp orange juice', '1 tbsp maple syrup', '1 tsp apple cider vinegar'],
+      },
+    ],
+    steps: [
+      'Rub turkey tenderloin with garlic-infused oil, orange zest, and smoked salt; roast at 400°F (205°C) for 20 minutes and rest before slicing.',
+      'Toss warm millet with shredded Brussels sprouts, baby kale, and cucumbers so the greens gently wilt.',
+      'Simmer cranberries with orange juice, maple syrup, and vinegar for 3 minutes to plump, then cool.',
+      'Layer bowls with grains, sliced turkey, and spoonfuls of cranberry relish. Finish with olive oil and flaky salt.',
+    ],
+    spotlightTips: [
+      'Swap millet for quinoa if that is what you have cooked already.',
+      'Meal prep by storing turkey separately and packing relish in a jar so bowls stay crisp.',
+    ],
+    nutrition: { calories: 480, protein: 36, carbs: 48, fat: 14, fiber: 7 },
+  },
+  {
+    id: 'turkey-sweet-potato-chili',
+    title: 'Smoky Turkey & Sweet Potato Chili',
+    subtitle: 'Chipotle broth, charred corn, limey dairy-free finish',
+    difficulty: 'easy',
+    totalTime: 45,
+    prepTime: 20,
+    rating: 4.9,
+    serves: 6,
+    proteins: ['turkey'],
+    allergens: [],
+  fodmap: 'moderate',
+    fodmapNotes: 'Beans are portioned and aromatics rely on garlic-infused oil for gentle digestion.',
+    heroGradient: ['#ee9ca7', '#ffdde1'],
+    mealType: 'dinner',
+    tags: ['one-pot', 'dairy free'],
+    moods: ['comfort'],
+    ingredients: [
+      {
+        title: 'Chili base',
+        items: ['1 tbsp garlic-infused olive oil', '1 lb ground turkey', '1 large sweet potato, diced', '1 red bell pepper, diced', '2 tsp smoked paprika', '1 tsp ground cumin', '1 chipotle in adobo, minced'],
+      },
+      {
+        title: 'Liquids',
+        items: ['3 cups low-sodium chicken broth', '1 (14-oz) can fire-roasted tomatoes', '1 cup canned white beans, rinsed', '1 cup frozen charred corn'],
+      },
+      {
+        title: 'Finish',
+        items: ['Juice of 1 lime', '1/4 cup chopped cilantro', 'Dairy-free yogurt or avocado for serving'],
+      },
+    ],
+    steps: [
+      'Brown turkey in garlic-infused oil over medium heat until deeply caramelized, about 6 minutes.',
+      'Add sweet potato and bell pepper; sauté 5 minutes before stirring in smoked paprika, cumin, and chipotle.',
+      'Pour in broth, tomatoes, beans, and corn. Simmer uncovered 20 minutes until the sweet potatoes are tender and the chili thickens.',
+      'Finish with lime juice and cilantro, then ladle into bowls with dairy-free yogurt or avocado.',
+    ],
+    spotlightTips: [
+      'Char an ear of corn under the broiler, slice off the kernels, and scatter over bowls for extra crunch.',
+      'Freeze leftovers flat in reusable bags for faster thawing.',
+    ],
+    nutrition: { calories: 420, protein: 32, carbs: 42, fat: 12, fiber: 8 },
   },
 ];
 

@@ -14,6 +14,7 @@ export type FilterChipProps = {
 
 export function FilterChip({ label, icon, active, subtitle, compact, onPress }: FilterChipProps) {
   const textColor = useThemeColor({}, 'text');
+  const subtitleColor = active ? 'rgba(255,255,255,0.8)' : '#8b8b8b';
 
   return (
     <Pressable
@@ -37,7 +38,7 @@ export function FilterChip({ label, icon, active, subtitle, compact, onPress }: 
       ) : null}
       <View style={styles.labelGroup}>
         <Text style={[styles.label, { color: active ? '#fff' : textColor }]}>{label}</Text>
-        {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
+        {subtitle ? <Text style={[styles.subtitle, { color: subtitleColor }]}>{subtitle}</Text> : null}
       </View>
     </Pressable>
   );

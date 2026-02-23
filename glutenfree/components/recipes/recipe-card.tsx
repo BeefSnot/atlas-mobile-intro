@@ -9,6 +9,7 @@ const mealColors: Record<Recipe['mealType'], string> = {
   lunch: '#c2f6f1',
   dinner: '#c9cbff',
   snack: '#ffd1d1',
+  dessert: '#ffe3f1',
 };
 
 const fodmapColors = {
@@ -45,7 +46,9 @@ export function RecipeCard({ recipe, onPress }: RecipeCardProps) {
       style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
     >
       <LinearGradient colors={recipe.heroGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.gradient}>
-        <View style={styles.headerRow}>
+        <View style={styles.gradientOverlay} />
+        <View style={styles.gradientContent}>
+          <View style={styles.headerRow}>
           <View style={[styles.badge, { backgroundColor: mealColors[recipe.mealType] }]}>
             <Text style={styles.badgeText}>{recipe.mealType.toUpperCase()}</Text>
           </View>
@@ -53,35 +56,36 @@ export function RecipeCard({ recipe, onPress }: RecipeCardProps) {
             <MaterialCommunityIcons name="star" color="#ffc960" size={16} />
             <Text style={styles.ratingText}>{recipe.rating.toFixed(1)}</Text>
           </View>
-        </View>
-
-        <Text style={styles.title}>{recipe.title}</Text>
-        <Text style={styles.subtitle}>{recipe.subtitle}</Text>
-
-        <View style={styles.metaRow}>
-          <View style={styles.metaItem}>
-            <MaterialCommunityIcons name="timer-outline" color="#fff" size={16} />
-            <Text style={styles.metaText}>{recipe.totalTime} min</Text>
           </View>
-          <View style={styles.metaItem}>
-            <MaterialCommunityIcons name="account-multiple-outline" color="#fff" size={16} />
-            <Text style={styles.metaText}>Serves {recipe.serves}</Text>
-          </View>
-          <View style={styles.metaItem}>
-            <View style={[styles.statusDot, { backgroundColor: fodmapColors[recipe.fodmap] }]} />
-            <Text style={styles.metaText}>{recipe.fodmap.toUpperCase()} FODMAP</Text>
-          </View>
-        </View>
 
-        <View style={styles.tagRow}>
-          {recipe.tags.slice(0, 3).map((tag) => (
-            <View key={tag} style={styles.tagChip}>
-              <Text style={styles.tagText}>{tag}</Text>
+          <Text style={styles.title}>{recipe.title}</Text>
+          <Text style={styles.subtitle}>{recipe.subtitle}</Text>
+
+          <View style={styles.metaRow}>
+            <View style={styles.metaItem}>
+              <MaterialCommunityIcons name="timer-outline" color="#fff" size={16} />
+              <Text style={styles.metaText}>{recipe.totalTime} min</Text>
             </View>
-          ))}
-        </View>
+            <View style={styles.metaItem}>
+              <MaterialCommunityIcons name="account-multiple-outline" color="#fff" size={16} />
+              <Text style={styles.metaText}>Serves {recipe.serves}</Text>
+            </View>
+            <View style={styles.metaItem}>
+              <View style={[styles.statusDot, { backgroundColor: fodmapColors[recipe.fodmap] }]} />
+              <Text style={styles.metaText}>{recipe.fodmap.toUpperCase()} FODMAP</Text>
+            </View>
+          </View>
 
-        <Text style={styles.allergenText}>{getReadableAllergen(recipe.allergens)}</Text>
+          <View style={styles.tagRow}>
+            {recipe.tags.slice(0, 3).map((tag) => (
+              <View key={tag} style={styles.tagChip}>
+                <Text style={styles.tagText}>{tag}</Text>
+              </View>
+            ))}
+          </View>
+
+          <Text style={styles.allergenText}>{getReadableAllergen(recipe.allergens)}</Text>
+        </View>
       </LinearGradient>
     </Pressable>
   );
@@ -100,6 +104,14 @@ const styles = StyleSheet.create({
   },
   gradient: {
     padding: 20,
+  },
+  gradientOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(7, 9, 17, 0.25)',
+  },
+  gradientContent: {
+    position: 'relative',
+    gap: 0,
   },
   headerRow: {
     flexDirection: 'row',

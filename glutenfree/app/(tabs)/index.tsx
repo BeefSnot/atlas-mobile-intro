@@ -79,9 +79,27 @@ const curatedCombos: CuratedCombo[] = [
     search: 'brunch',
     proteins: ['plant'],
   },
+  {
+    id: 'turkey-cozy-club',
+    title: 'Turkey cozy club',
+    description: 'Gravy bowls, casseroles, citrus bowls',
+    icon: 'food-turkey',
+    gradient: ['#ffe29f', '#ffa99f'],
+    search: 'turkey',
+    fodmap: 'gentle',
+    proteins: ['turkey'],
+  },
+  {
+    id: 'dairy-free-glow',
+    title: 'Dairy-free glow',
+    description: 'Coconut gravy, broth bowls, sorbet treats',
+    icon: 'leaf',
+    gradient: ['#d9a7c7', '#fffcdc'],
+    allergens: ['dairy'],
+  },
 ];
 
-const searchShortcuts = ['citrus', 'tacos', '30-minute', 'brothy', 'meal prep'];
+const searchShortcuts = ['citrus', 'tacos', 'turkey', 'dairy free', '30-minute', 'brothy', 'meal prep'];
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -96,6 +114,53 @@ export default function HomeScreen() {
     activeProteins.size +
     (fodmapFocus !== 'any' ? 1 : 0) +
     (search.trim() ? 1 : 0);
+
+  const turkeyCount = useMemo(
+    () => recipes.filter((recipe) => recipe.proteins.includes('turkey')).length,
+    []
+  );
+  const dairyFreeCount = useMemo(
+    () => recipes.filter((recipe) => !recipe.allergens.includes('dairy')).length,
+    []
+  );
+  const quickMealsCount = useMemo(
+    () => recipes.filter((recipe) => recipe.totalTime <= 30).length,
+    []
+  );
+
+  const quickStats = useMemo(
+    () => [
+      {
+        id: 'filters',
+        label: 'Filters on',
+        value: filtersActive,
+        icon: 'tune-vertical',
+        accent: '#fde4cf',
+      },
+      {
+        id: 'turkey',
+        label: 'Turkey-friendly',
+        value: turkeyCount,
+        icon: 'food-turkey',
+        accent: '#fff1eb',
+      },
+      {
+        id: 'dairy-free',
+        label: 'Dairy-free picks',
+        value: dairyFreeCount,
+        icon: 'leaf',
+        accent: '#e0f2fe',
+      },
+      {
+        id: 'quick',
+        label: '≤30 min meals',
+        value: quickMealsCount,
+        icon: 'timer-sand',
+        accent: '#e0f2f1',
+      },
+    ],
+    [filtersActive, turkeyCount, dairyFreeCount, quickMealsCount]
+  );
 
   const filteredRecipes = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -458,6 +523,22 @@ export default function HomeScreen() {
           ) : null}
         </View>
       </ThemedView>
+
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.quickStatsRow}
+      >
+        {quickStats.map((stat) => (
+          <View key={stat.id} style={styles.statCard}>
+            <View style={[styles.statIcon, { backgroundColor: stat.accent }]}>
+              <MaterialCommunityIcons name={stat.icon as any} size={16} color="#111826" />
+            </View>
+            <Text style={styles.statNumber}>{stat.value}</Text>
+            <Text style={styles.statLabel}>{stat.label}</Text>
+          </View>
+        ))}
+      </ScrollView>
 
       <View style={styles.sectionHeader}>
         <ThemedText type="subtitle">Chef-crafted recipes</ThemedText>
@@ -832,5 +913,41 @@ const styles = StyleSheet.create({
   emptyButtonText: {
     color: '#fff',
     fontWeight: '700',
+  },
+  quickStatsRow: {
+    flexDirection: 'row',
+    paddingVertical: 8,
+    gap: 16,
+  },
+  statCard: {
+    width: 160,
+    borderRadius: 22,
+    borderWidth: 1,
+    borderColor: '#f0e7dc',
+    backgroundColor: '#fff',
+    padding: 16,
+    marginRight: 16,
+    boxShadow: '0px 16px 30px rgba(17, 24, 38, 0.08)',
+  },
+  statIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10,
+  },
+  statNumber: {
+    fontSize: 22,
+    fontWeight: '800',
+    color: '#111826',
+  },
+  statLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#6b7280',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginTop: 4,
   },
 });
