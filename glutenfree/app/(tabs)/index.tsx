@@ -305,7 +305,7 @@ export default function HomeScreen() {
   return (
     <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
       <LinearGradient colors={['#f8ede3', '#fcd3c1']} style={styles.heroCard}>
-        <Text style={styles.eyebrow}>Flourless Table</Text>
+        <Text style={styles.eyebrow}>SafeSpoon</Text>
         <Text style={styles.heroTitle}>Gluten-free & allergen smart</Text>
         <Text style={styles.heroCopy}>
           Chef-tested recipes, low-FODMAP notes, and quick filters so you spend less time vetting and

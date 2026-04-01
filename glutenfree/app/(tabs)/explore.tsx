@@ -2,11 +2,19 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 
 import { RecipeCard } from '@/components/recipes/recipe-card';
 import { ThemedText } from '@/components/themed-text';
-import { getMoodRecommendations, type Mood } from '@/constants/recipes';
+import { getMoodRecommendations, recipes, type Mood } from '@/constants/recipes';
+import { getRecipeHelp } from '@/lib/gemini';
 
 const moods: {
   key: Mood;
@@ -42,14 +50,85 @@ const pantryItems = [
   { id: 'chia', label: 'Golden chia seeds', tip: 'Add body to batters and extra fiber.' },
 ];
 
+type AiSection = {
+  title: string;
+  lines: string[];
+};
+
+function parseAiSections(content: string): AiSection[] {
+  const lines = content
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  const sections: AiSection[] = [];
+  let currentSection: AiSection | null = null;
+
+  for (const line of lines) {
+    const numberedMatch = line.match(/^\d+[.)]\s*(.+)$/);
+
+    if (numberedMatch) {
+      currentSection = {
+        title: numberedMatch[1],
+        lines: [],
+      };
+      sections.push(currentSection);
+      continue;
+    }
+
+    const bulletMatch = line.match(/^[-•]\s*(.+)$/);
+    if (bulletMatch) {
+      if (!currentSection) {
+        currentSection = { title: 'AI suggestions', lines: [] };
+        sections.push(currentSection);
+      }
+      currentSection.lines.push(bulletMatch[1]);
+      continue;
+    }
+
+    if (!currentSection) {
+      currentSection = { title: 'AI suggestions', lines: [] };
+      sections.push(currentSection);
+    }
+
+    currentSection.lines.push(line);
+  }
+
+  return sections;
+}
+
 export default function TabTwoScreen() {
   const router = useRouter();
   const [activeMood, setActiveMood] = useState<Mood>('comfort');
   const [pantryState, setPantryState] = useState<Record<string, boolean>>({});
+  const [userPrompt, setUserPrompt] = useState('');
+  const [output, setOutput] = useState("");
+  const [modelUsed, setModelUsed] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const quickPrompts = [
+    'What can I make with my pantry?',
+    '30-minute high protein dinner',
+    'Best flour substitute for baking?',
+  ];
 
   const recommendations = useMemo(
     () => getMoodRecommendations(activeMood).slice(0, 2),
     [activeMood]
+  );
+
+  const aiSections = useMemo(() => parseAiSections(output), [output]);
+
+  const recipeCatalogContext = useMemo(
+    () =>
+      recipes
+        .slice(0, 20)
+        .map(
+          (recipe) =>
+            `${recipe.title} | ${recipe.mealType} | ${recipe.totalTime} min | allergens: ${recipe.allergens.join(', ') || 'none'} | tags: ${recipe.tags.join(', ')}`
+        )
+        .join('\n'),
+    []
   );
 
   const pantryProgress = useMemo(() => {
@@ -62,6 +141,31 @@ export default function TabTwoScreen() {
     setPantryState((prev) => ({ ...prev, [id]: !prev[id] }));
   }
 
+  async function onAskAI() {
+    const finalPrompt = userPrompt.trim();
+    if (!finalPrompt) return;
+
+    try {
+      setLoading(true);
+      const selectedPantry = pantryItems
+        .filter((item) => pantryState[item.id])
+        .map((item) => item.label);
+
+      const result = await getRecipeHelp({
+        userPrompt: finalPrompt,
+        pantryItems: selectedPantry,
+        recipeCatalogContext,
+      });
+      setOutput(result.text);
+      setModelUsed(result.modelUsed);
+    } catch (e: any) {
+      setOutput(e.message || "AI request failed");
+      setModelUsed('');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
       <View>
@@ -71,6 +175,57 @@ export default function TabTwoScreen() {
         <Text style={styles.pageSubtitle}>
           Dial in tonight’s mood, prep your pantry, and master new techniques for gluten-free cooking.
         </Text>
+      </View>
+
+      <View style={styles.aiCard}>
+        <View style={styles.sectionHeader}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <MaterialCommunityIcons name="chef-hat" size={24} color="#111826" />
+            <ThemedText type="subtitle">SafeSpoon AI</ThemedText>
+          </View>
+        </View>
+        <Text style={styles.aiHint}>
+          Describe what you have, what you're allergic to, or ask for ideas.
+        </Text>
+        <View style={styles.aiFields}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.quickPromptsWrap}>
+            {quickPrompts.map((q) => (
+              <Pressable
+                key={q}
+                style={styles.quickPromptChip}
+                onPress={() => setUserPrompt(q)}
+              >
+                <Text style={styles.quickPromptText}>{q}</Text>
+              </Pressable>
+            ))}
+          </ScrollView>
+
+          <TextInput
+            placeholder="E.g., I have chicken, rice, and broccoli. What can I make in 30 mins?"
+            multiline
+            value={userPrompt}
+            onChangeText={setUserPrompt}
+            style={styles.aiTextAreaPrimary}
+          />
+          <Pressable onPress={onAskAI} disabled={loading || !userPrompt.trim()} style={[styles.aiButton, (loading || !userPrompt.trim()) && styles.aiButtonDisabled]}>
+            <Text style={styles.aiButtonText}>{loading ? 'Loading...' : 'Ask SafeSpoon'}</Text>
+          </Pressable>
+        </View>
+        {!!output && aiSections.length > 0 ? (
+          <View style={styles.aiSectionsWrap}>
+            {!!modelUsed ? <Text style={styles.aiMeta}>Model: {modelUsed}</Text> : null}
+            {aiSections.map((section, index) => (
+              <View key={`${section.title}-${index}`} style={styles.aiAnswerCard}>
+                <Text style={styles.aiAnswerTitle}>{section.title}</Text>
+                {section.lines.map((line, lineIndex) => (
+                  <Text key={`${section.title}-line-${lineIndex}`} style={styles.aiAnswerText}>
+                    • {line}
+                  </Text>
+                ))}
+              </View>
+            ))}
+          </View>
+        ) : null}
       </View>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.moodRow}>
@@ -190,6 +345,92 @@ const styles = StyleSheet.create({
   pageSubtitle: {
     color: '#4b5563',
     lineHeight: 20,
+  },
+  aiCard: {
+    borderRadius: 28,
+    backgroundColor: '#f8fafc',
+    padding: 20,
+    gap: 12,
+  },
+  aiHint: {
+    color: '#4b5563',
+    lineHeight: 20,
+    marginBottom: 4,
+  },
+  quickPromptsWrap: {
+    flexDirection: 'row',
+    marginBottom: 8,
+  },
+  quickPromptChip: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    marginRight: 8,
+  },
+  quickPromptText: {
+    fontSize: 13,
+    color: '#374151',
+    fontWeight: '500',
+  },
+  aiFields: {
+    gap: 8,
+  },
+  aiTextAreaPrimary: {
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 14,
+    backgroundColor: '#ffffff',
+    padding: 16,
+    minHeight: 120,
+    textAlignVertical: 'top',
+    color: '#111826',
+    fontSize: 15,
+  },
+  aiButton: {
+    backgroundColor: '#111826',
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 44,
+    paddingHorizontal: 16,
+  },
+  aiButtonDisabled: {
+    opacity: 0.7,
+  },
+  aiButtonText: {
+    color: '#ffffff',
+    fontWeight: '700',
+  },
+  aiError: {
+    color: '#b91c1c',
+    fontSize: 13,
+  },
+  aiAnswerCard: {
+    borderRadius: 14,
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    padding: 12,
+    gap: 6,
+  },
+  aiAnswerTitle: {
+    fontWeight: '700',
+    color: '#111826',
+  },
+  aiAnswerText: {
+    color: '#1f2937',
+    lineHeight: 20,
+  },
+  aiSectionsWrap: {
+    gap: 10,
+  },
+  aiMeta: {
+    color: '#6b7280',
+    fontSize: 12,
+    fontWeight: '600',
   },
   moodRow: {
     gap: 16,

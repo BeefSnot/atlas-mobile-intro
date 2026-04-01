@@ -27,7 +27,7 @@ You can start developing by editing the files inside the **app** directory. This
 
 ## Gluten-free experience
 
-This workspace now powers **Flourless Table**, a chef-style gluten-free recipe book focused on allergen safety and FODMAP-friendly cooking.
+This workspace now powers **SafeSpoon**, a chef-style gluten-free recipe book focused on allergen safety and FODMAP-friendly cooking.
 
 - **Interactive filters** – toggle individual allergens (corn, fish, meat, nuts, tree nuts, peanuts, etc.) and choose a FODMAP focus to instantly refine the library.
 - **Curated data** – every recipe is hand-written with ingredients, steps, nourishment highlights, and allergen notes stored in `constants/recipes.ts`.
@@ -35,6 +35,29 @@ This workspace now powers **Flourless Table**, a chef-style gluten-free recipe b
 - **Flavor studio tab** – plan by cooking mood, track pantry staples, and skim chef techniques for gluten-free texture.
 
 Run `npm run lint` to keep the TypeScript and Expo Router structure healthy, then `npx expo start` to preview the mobile experience.
+
+## AI recipe helper (Gemini)
+
+The Explore tab includes an **AI recipe helper** panel.
+
+For local Expo testing, create a `.env` file in `glutenfree/` with:
+
+```bash
+EXPO_PUBLIC_GEMINI_API_KEY=your_gemini_api_key
+# optional legacy single model setting
+EXPO_PUBLIC_GEMINI_MODEL=gemini-2.5-pro
+# optional dual-model strategy (preferred)
+EXPO_PUBLIC_GEMINI_PRIMARY_MODEL=gemini-2.5-pro
+EXPO_PUBLIC_GEMINI_SECONDARY_MODEL=gemini-2.0-flash
+```
+
+If you want to route through your backend (recommended for production/Vercel), set:
+
+```bash
+EXPO_PUBLIC_AI_ENDPOINT=https://your-api.example.com/api/recipe-assistant
+```
+
+When `EXPO_PUBLIC_AI_ENDPOINT` is set, the app uses that endpoint instead of calling Gemini directly.
 
 ## Get a fresh project
 
