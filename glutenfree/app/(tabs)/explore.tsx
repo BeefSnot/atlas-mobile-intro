@@ -219,7 +219,11 @@ export default function TabTwoScreen() {
                 <Text style={styles.aiAnswerTitle}>{section.title}</Text>
                 {section.lines.map((line, lineIndex) => (
                   <Text key={`${section.title}-line-${lineIndex}`} style={styles.aiAnswerText}>
-                    • {line}
+                    • {line.split('**').map((part, i) => (
+                      <Text key={i} style={i % 2 === 1 ? { fontWeight: '700', color: '#111826' } : {}}>
+                        {part}
+                      </Text>
+                    ))}
                   </Text>
                 ))}
               </View>
